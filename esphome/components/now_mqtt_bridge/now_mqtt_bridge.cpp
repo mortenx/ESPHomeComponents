@@ -218,7 +218,10 @@ namespace esphome
                 ESP_LOGE(TAG, "Error initializing ESP-Now MQTT Bridge");
                 return;
             }
-            esp_now_register_recv_cb(Now_MQTT_BridgeComponent::call_on_data_recv_callback);
+            esp_now_register_recv_cb([](const esp_now_recv_info* info, const uint8_t* data, int data_len) {
+  Now_MQTT_BridgeComponent::call_on_data_recv_callback(info->src_addr, data, data_len);
+});
+
             esp_wifi_set_promiscuous(true);
             esp_wifi_set_promiscuous_rx_cb(Now_MQTT_BridgeComponent::call_prom_callback);
         }
